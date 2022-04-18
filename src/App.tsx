@@ -1,12 +1,14 @@
 import React from "react";
 import logo from "./logo.svg";
+import { useState } from "react";
 import "./App.css";
 import { create, CID, IPFSHTTPClient } from "ipfs-http-client";
 
 function App() {
+  const [getCid, setCID] = useState("");
   let ipfs: IPFSHTTPClient | undefined;
 
-  const sendToIPFS = async (e:any) => {
+  const sendToIPFS = async (e: any) => {
     e.preventDefault();
     try {
       ipfs = create({
@@ -15,9 +17,11 @@ function App() {
 
       const data = `Hey Bram`;
 
-      const cid = await ipfs.add(data);
+      const cid: any = await ipfs.add(data);
+      setCID(cid.path);
 
       console.log(cid.path);
+      return cid;
     } catch (error) {
       console.error("IPFS error ", error);
       ipfs = undefined;
@@ -27,16 +31,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {(
+        {
           <>
-            <p>Upload File using IPFS</p>
-
-            <form onSubmit={sendToIPFS}>
-
-              <button type="submit">Send</button>
-            </form>
+            <p>Upload string using IPFS</p>
+            <p>IPFS cid is {getCid}</p>
+            <button onClick={sendToIPFS}>Send</button>
           </>
-        )}
+        }
       </header>
     </div>
   );
