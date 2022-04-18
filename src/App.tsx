@@ -5,22 +5,38 @@ import { create, CID, IPFSHTTPClient } from "ipfs-http-client";
 
 function App() {
   let ipfs: IPFSHTTPClient | undefined;
-  try {
-    ipfs = create({
-      url: "https://ipfs.infura.io:5001/api/v0",
-    });
-  } catch (error) {
-    console.error("IPFS error ", error);
-    ipfs = undefined;
-  }
+
+  const sendToIPFS = async (e:any) => {
+    e.preventDefault();
+    try {
+      ipfs = create({
+        url: "https://ipfs.infura.io:5001/api/v0",
+      });
+
+      const data = `Hey Bram`;
+
+      const cid = await ipfs.add(data);
+
+      console.log(cid.path);
+    } catch (error) {
+      console.error("IPFS error ", error);
+      ipfs = undefined;
+    }
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        {!ipfs && (
-          <p>Oh oh, Not connected to IPFS. Checkout out the logs for errors</p>
+        {(
+          <>
+            <p>Upload File using IPFS</p>
+
+            <form onSubmit={sendToIPFS}>
+
+              <button type="submit">Send</button>
+            </form>
+          </>
         )}
-        <p> connected to ipfs</p>
       </header>
     </div>
   );
